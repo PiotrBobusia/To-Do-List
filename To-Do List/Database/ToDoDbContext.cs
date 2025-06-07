@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using To_Do_List.Models;
 
 namespace To_Do_List.Database
 {
-    public class ToDoDbContext : DbContext
+    public class ToDoDbContext : IdentityDbContext<User>
     {
         public DbSet<ToDoTask> ToDoTasks { get; set; }
 
@@ -19,7 +20,18 @@ namespace To_Do_List.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ToDoTask>(x => x.HasKey(x => x.TaskId));
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ToDoTask>(x => 
+            {
+                x.HasKey(x => x.TaskId);
+
+                x.HasOne(x => x.User)
+                    .WithMany(y => y.ToDoTasks)
+                    .HasForeignKey(x => x.UserId);
+            });
+
         }
+        
     }
 }
