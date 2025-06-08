@@ -1,11 +1,11 @@
-﻿@model IEnumerable<To_Do_List.Models.ToDoTask>
+﻿@model IEnumerable<To_Do_List.Models.DTOs.ToDoTaskDTO>
 
 @{
     ViewData["Title"] = "To-Do List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>View</h1>
+<h1>Your Tasks List</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -29,25 +29,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in DModel) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Priority)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TaskId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TaskId">Delete</a>
-            </td>
+        @foreach (var item in Model) {
+            string bgColor = item.Done ? "bg-success" : "bg-danger";
+
+            <tr class="bg-opacity-10 @bgColor">
+                <td>
+                    <b>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </b>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    @if (!item.Done)
+                    {
+                        <a asp-action="Done" asp-route-id="@item.TaskId"><button class="btn btn-success">Done</button></a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

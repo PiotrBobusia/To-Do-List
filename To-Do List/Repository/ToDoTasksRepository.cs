@@ -12,16 +12,28 @@ namespace To_Do_List.Repository
             _context = context;
         }
 
-        public async Task<bool> AddTaskAsync(ToDoTask task)
+        public async Task AddTaskAsync(ToDoTask task)
         {
             await _context.ToDoTasks.AddAsync(task);
             await _context.SaveChangesAsync();
-            return true;
         }
 
         public async Task<IEnumerable<ToDoTask>> GetUserTasksAsync(string userId)
         {
             return await _context.ToDoTasks.Where(x => x.UserId == userId).ToListAsync();
         }
+
+        public async Task SetDoneAsync(int taskId)
+        {
+            var task = _context.ToDoTasks.FirstOrDefault(x => x.TaskId == taskId);
+
+            if (task is null) return;
+
+            task.Done = true;
+
+            _context.ToDoTasks.Update(task);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

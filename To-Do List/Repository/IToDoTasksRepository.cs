@@ -4,7 +4,8 @@ namespace To_Do_List.Repository
 {
     public interface IToDoTasksRepository
     {
-        Task<bool> AddTaskAsync(ToDoTask task);
+        Task AddTaskAsync(ToDoTask task);
         Task<IEnumerable<ToDoTask>> GetUserTasksAsync(string userId);
+        Task SetDoneAsync(int taskId);
     }
 }

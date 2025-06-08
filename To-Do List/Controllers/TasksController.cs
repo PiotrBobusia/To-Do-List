@@ -22,9 +22,15 @@ namespace To_Do_List.Controllers
             return View();
         }
 
-        public IActionResult List()
+        [Authorize]
+        public async Task<IActionResult> List()
         {
-            return View();
+            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
+            IEnumerable<ToDoTask> taskList = await _tasksRepository.GetUserTasksAsync(userId);
+
+            var taskDtoList = _mapper.Map<IEnumerable<ToDoTaskDTO>>(taskList);
+
+            return View(taskDtoList);
         }
 
         [Authorize]
@@ -37,11 +43,22 @@ namespace To_Do_List.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTask(ToDoTaskDTO taskDTO)
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("AddTask");
+            }
             var newTask = _mapper.Map<ToDoTask>(taskDTO);
             var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
             newTask.UserId = userId;
 
             await _tasksRepository.AddTaskAsync(newTask);
+            return RedirectToAction("List");
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Done(int id)
+        {
+            await _tasksRepository.SetDoneAsync(id);
             return RedirectToAction("List");
         }
     }
