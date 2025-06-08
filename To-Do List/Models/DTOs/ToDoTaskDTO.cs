@@ -4,7 +4,7 @@
     {
         public string Title { get; set; } = default!;
         public string? Description { get; set; }
-        public DateOnly Date { get; set; }
+        public DateOnly Date { get; set; } = default;
         public Priority Priority { get; set; }
         public bool Done { get; set; } = false;
     }

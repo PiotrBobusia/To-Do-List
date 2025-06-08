@@ -4,7 +4,7 @@ using To_Do_List.Models;
 
 namespace To_Do_List.Repository
 {
-    public class ToDoTasksRepository
+    public class ToDoTasksRepository : IToDoTasksRepository
     {
         private ToDoDbContext _context;
         public ToDoTasksRepository(ToDoDbContext context)
@@ -12,10 +12,11 @@ namespace To_Do_List.Repository
             _context = context;
         }
 
-        public async void AddTaskAsync(ToDoTask task)
+        public async Task<bool> AddTaskAsync(ToDoTask task)
         {
             await _context.ToDoTasks.AddAsync(task);
             await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<IEnumerable<ToDoTask>> GetUserTasksAsync(string userId)

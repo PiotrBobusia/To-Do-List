@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using To_Do_List.Database;
 using To_Do_List.Models;
 using To_Do_List.Models.MapProfile;
+using To_Do_List.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddDefaultIdentity<User>()
 builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Test")));
 
 builder.Services.AddAutoMapper(typeof(ToDoTaskProfile));
+
+builder.Services.AddScoped<IToDoTasksRepository, ToDoTasksRepository>();
 
 var app = builder.Build();
 
