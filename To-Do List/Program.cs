@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using To_Do_List.Database;
 using To_Do_List.Models;
+using To_Do_List.Models.MapProfile;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddDefaultIdentity<User>()
     .AddApiEndpoints();
 
 builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Test")));
+
+builder.Services.AddAutoMapper(typeof(ToDoTaskProfile));
 
 var app = builder.Build();
 
