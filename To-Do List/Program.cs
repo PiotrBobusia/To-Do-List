@@ -7,6 +7,7 @@ using To_Do_List.Models;
 using To_Do_List.Models.DTOs;
 using To_Do_List.Models.MapProfile;
 using To_Do_List.Repository;
+using To_Do_List.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<ToDoTaskDTOValidator>()
     .AddFluentValidationClientsideAdapters();
 
 builder.Services.AddScoped<IToDoTasksRepository, ToDoTasksRepository>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 var app = builder.Build();
 

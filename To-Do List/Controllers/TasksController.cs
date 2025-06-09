@@ -5,6 +5,7 @@ using System.Security.Claims;
 using To_Do_List.Models;
 using To_Do_List.Models.DTOs;
 using To_Do_List.Repository;
+using To_Do_List.Services;
 
 namespace To_Do_List.Controllers
 {
@@ -12,9 +13,11 @@ namespace To_Do_List.Controllers
     {
         private IMapper _mapper;
         private IToDoTasksRepository _tasksRepository;
-        public TasksController(IToDoTasksRepository tasksRepository,IMapper mapper)
+        private ITaskService _taskService;
+        public TasksController(IToDoTasksRepository tasksRepository, ITaskService taskService, IMapper mapper)
         {
             _tasksRepository = tasksRepository;
+            _taskService = taskService;
             _mapper = mapper;
         }
         public IActionResult Index()
@@ -25,10 +28,7 @@ namespace To_Do_List.Controllers
         [Authorize]
         public async Task<IActionResult> List()
         {
-            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
-            IEnumerable<ToDoTask> taskList = await _tasksRepository.GetUserTasksAsync(userId);
-
-            var taskDtoList = _mapper.Map<IEnumerable<ToDoTaskDTO>>(taskList);
+            var taskDtoList = await _taskService.GetTasksListByUser(User);
 
             return View(taskDtoList);
         }
@@ -47,18 +47,16 @@ namespace To_Do_List.Controllers
             {
                 return RedirectToAction("AddTask");
             }
-            var newTask = _mapper.Map<ToDoTask>(taskDTO);
-            var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
-            newTask.UserId = userId;
 
-            await _tasksRepository.AddTaskAsync(newTask);
+            await _taskService.AddTaskByUser(User, taskDTO);
+
             return RedirectToAction("List");
         }
 
         [Authorize]
         public async Task<IActionResult> Done(int id)
         {
-            await _tasksRepository.SetDoneAsync(id);
+            await _taskService.SetDoneByTaskId(id);
             return RedirectToAction("List");
         }
     }
