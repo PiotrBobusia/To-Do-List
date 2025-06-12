@@ -26,9 +26,35 @@ namespace To_Do_List.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string orderBy = "")
         {
             var taskDtoList = await _taskService.GetTasksListByUser(User);
+
+            TempData["orderBy"] = orderBy;
+
+                switch (orderBy)
+                {
+                    case "DateDesc":
+                        taskDtoList = taskDtoList.OrderByDescending(x => x.Date);
+                        break;
+
+                    case "PriorityDesc":
+                        taskDtoList = taskDtoList.OrderByDescending(x => x.Priority);
+                        break;
+
+                    case "Date":
+                        taskDtoList = taskDtoList.OrderBy(x => x.Date);
+                        break;
+
+                    case "Priority":
+                        taskDtoList = taskDtoList.OrderBy(x => x.Priority);
+                        break;
+
+                    _:
+                        break;
+                }
+
+
 
             return View(taskDtoList);
         }
@@ -56,8 +82,10 @@ namespace To_Do_List.Controllers
         [Authorize]
         public async Task<IActionResult> Done(int id)
         {
+            if (TempData["orderBy"] is not null) TempData.Keep("orderBy");
+
             await _taskService.SetDoneByTaskId(id);
-            return RedirectToAction("List");
+            return RedirectToAction("List", new {OrderBy = TempData["orderBy"] });
         }
     }
 }
