@@ -1,4 +1,5 @@
-﻿@model IEnumerable<To_Do_List.Models.DTOs.ToDoTaskDTO>
+﻿@using Microsoft.AspNetCore.Components
+@model IEnumerable<To_Do_List.Models.DTOs.ToDoTaskDTO>
 
 @{
     ViewData["Title"] = "To-Do List";
@@ -7,13 +8,28 @@
     string orderByDate = TempData["orderBy"] is not null && TempData["orderBy"].ToString() == "Date" ? "DateDesc" : "Date";
     string orderByPriority = TempData["orderBy"] is not null && TempData["orderBy"].ToString() == "Priority" ? "PriorityDesc" : "Priority";
     TempData.Keep("orderBy");
+
+    TempData.Keep("isUnfinished");
+    bool isUnfinished = TempData["isUnfinished"] is not null ? (bool)TempData["isUnfinished"] : false;
+    
+
 }
 
 <h1>Your Tasks List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-success" asp-action="AddTask">Add New Task</a>
+    @if (!isUnfinished){
+        <a class="btn btn-success" asp-action="List" asp-route-isUnfinished="true">Show only unfinished tasks</a>
+    }
+    else{
+        <a class="btn btn-success" asp-action="List" asp-route-isUnfinished="false">Show all tasks</a>
+    }
+
 </p>
+
+
+
 <table class="table">
     <thead>
         <tr>
@@ -29,7 +45,8 @@
             <th>
                 <a asp-controller="Tasks" asp-action="List" asp-route-OrderBy=@orderByPriority>@Html.DisplayNameFor(model => model.Priority)</a>
             </th>
-            <th></th>
+            <th>
+            </th>
         </tr>
     </thead>
     <tbody>

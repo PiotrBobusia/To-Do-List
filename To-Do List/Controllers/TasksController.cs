@@ -26,35 +26,15 @@ namespace To_Do_List.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> List(string orderBy = "")
+        public async Task<IActionResult> List(string orderBy = "", bool? isUnfinished = null)
         {
-            var taskDtoList = await _taskService.GetTasksListByUser(User);
+
+            if(isUnfinished is not null) TempData["isUnfinished"] = isUnfinished;
+            else if (TempData["isUnfinished"] is null) TempData["isUnfinished"]  = false;
+
+            var taskDtoList = await _taskService.GetSortedListByUser(User, orderBy, (bool)TempData["isUnfinished"]);
 
             TempData["orderBy"] = orderBy;
-
-                switch (orderBy)
-                {
-                    case "DateDesc":
-                        taskDtoList = taskDtoList.OrderByDescending(x => x.Date);
-                        break;
-
-                    case "PriorityDesc":
-                        taskDtoList = taskDtoList.OrderByDescending(x => x.Priority);
-                        break;
-
-                    case "Date":
-                        taskDtoList = taskDtoList.OrderBy(x => x.Date);
-                        break;
-
-                    case "Priority":
-                        taskDtoList = taskDtoList.OrderBy(x => x.Priority);
-                        break;
-
-                    _:
-                        break;
-                }
-
-
 
             return View(taskDtoList);
         }

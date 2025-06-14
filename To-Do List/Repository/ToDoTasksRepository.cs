@@ -23,6 +23,11 @@ namespace To_Do_List.Repository
             return await _context.ToDoTasks.Where(x => x.UserId == userId).ToListAsync();
         }
 
+        public async Task<IEnumerable<ToDoTask>> GetUnfinishedUserTasksAsync(string userId)
+        {
+            return await _context.ToDoTasks.Where(x => x.UserId == userId && x.Done == false).ToListAsync();
+        }
+
         public async Task SetDoneAsync(int taskId)
         {
             var task = _context.ToDoTasks.FirstOrDefault(x => x.TaskId == taskId);
