@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using To_Do_List.Database;
+using To_Do_List.Middlewares;
 using To_Do_List.Models;
 using To_Do_List.Models.DTOs;
 using To_Do_List.Models.MapProfile;
@@ -27,14 +28,16 @@ builder.Services.AddValidatorsFromAssemblyContaining<ToDoTaskDTOValidator>()
 
 builder.Services.AddScoped<IToDoTasksRepository, ToDoTasksRepository>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
+if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Tasks/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

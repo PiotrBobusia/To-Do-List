@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Security.Claims;
 using To_Do_List.Models;
 using To_Do_List.Models.DTOs;
@@ -21,6 +22,11 @@ namespace To_Do_List.Controllers
             _mapper = mapper;
         }
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult Error()
         {
             return View();
         }
