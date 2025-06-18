@@ -18,7 +18,7 @@ builder.Services.AddDefaultIdentity<User>()
     .AddEntityFrameworkStores<ToDoDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Test")));
+builder.Services.AddDbContext<ToDoDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Tests")));
 
 builder.Services.AddAutoMapper(typeof(ToDoTaskProfile));
 
